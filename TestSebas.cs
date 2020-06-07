@@ -144,7 +144,7 @@ namespace Proyecto_Final_Estructuras_Discretas
                             for(int i = 0; i < counter; i++)
                                 for(int j = 0; j < counter - 1; j++)
                                 {
-                                    if(Convert.ToInt32(listaVerticesTemp[j]) > Convert.ToInt32(listaVerticesTemp[j + 1]))
+                                    if(listaVerticesTemp[j].CompareTo(listaVerticesTemp[j + 1]) > 0)
                                     {
                                         dataVerticeTemp = listaVerticesTemp[j];
                                         listaVerticesTemp[j] = listaVerticesTemp[j + 1];
