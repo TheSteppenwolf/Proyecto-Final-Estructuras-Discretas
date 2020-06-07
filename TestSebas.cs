@@ -15,10 +15,16 @@ namespace Proyecto_Final_Estructuras_Discretas
             // Almacena el orden de todos los vertices ingresados.
             List<Vertices> listaVertices = new List<Vertices>();
 
+            // Sera el QUEUE.
+            List<Vertices> QUEUE = new List<Vertices>();
+
             // Variables que permitirán operar fluidamente con el programa.
-            int maxVertices, counter = 1, index = 0;
-            string[] listaVerticesTemp;
-            string dataVertice, dataVerticeTemp = null;            
+            int maxVertices = 0, counter = 1, index = 0;
+            string[] listaVerticesTemp = null;
+            string dataVertice = null, dataVerticeTemp = null;
+
+            // Variables para el analisis del resusltado.
+            List<int> listaIndexers = new List<int>();            
 
             // Variables para el menú.
             string opcion1 = null, opcionAdv = null;
@@ -82,13 +88,77 @@ namespace Proyecto_Final_Estructuras_Discretas
                             }                                            
                         }
 
+                        Console.Clear();
+                        Console.WriteLine("Procesando información..."); Procesando();
+                        Console.WriteLine("\n\nLos datos han sido guardados exitosamente...");
+                        Console.WriteLine("Presione cualquier tecla para regresar..."); Console.ReadKey(); Console.Clear();
+
                         break;
 
                     #endregion
 
-                    #region Resultados de bsuqueda por BFS
+                    #region Resultados de busqueda por BFS
 
                     case "2":
+                        // Paso 1: Todos los vertices ya se encuentran inicializados en el estado ready o STATUS = 1.
+                        // Paso 2: El vertice inicial se cambia de estado al waiting o STATUS = 2.
+                        foreach(var iter in listaVertices)
+                        {
+                            if(iter.Data == listaVerticesTemp[0])
+                            {
+                                dataVertice = iter.Data;
+                                dataVerticeTemp = iter.PastV;
+                                counter = listaVertices.IndexOf(iter);
+                            }
+                        }
+                        QUEUE.Add(new Vertices { State = 2, PastV = dataVerticeTemp, Data = dataVertice });
+                        listaVertices.RemoveAt(counter);
+
+
+                        // Paso 3: Repetir los pasos 4 y 5 hasta obtener todos los valores.
+                        while(listaVertices != null)
+                        {
+                            counter = 0;
+                            listaVerticesTemp = new string[maxVertices];
+
+                            // Paso 4: Sacar el primer vertice N para ser procesado cambiando su estado a processed o STATUS = 3.
+                            foreach (var iter in listaVertices)
+                            {
+                                if (iter.PastV == dataVertice)
+                                {
+                                    listaVerticesTemp[counter] = iter.Data; 
+                                    listaIndexers.Add(listaVertices.IndexOf(iter));
+                                    counter++;
+                                }
+                            }
+
+                            // Elimina los vertices de la anterior lista.
+                            int temp = 0;
+                            foreach (var iter in listaIndexers)
+                            {                                
+                                listaVertices.RemoveAt(iter - temp);
+                                temp++;
+                            }
+
+                            // Ordena de manera ascendente desde el primer valor hasta el ultimo valor el array.
+                            for(int i = 0; i < counter; i++)
+                                for(int j = 0; j < counter - 1; j++)
+                                {
+                                    if(Convert.ToInt32(listaVerticesTemp[j]) > Convert.ToInt32(listaVerticesTemp[j + 1]))
+                                    {
+                                        dataVerticeTemp = listaVerticesTemp[j];
+                                        listaVerticesTemp[j] = listaVerticesTemp[j + 1];
+                                        listaVerticesTemp[j + 1] = dataVerticeTemp;
+                                    }
+                                }
+
+                            // Se ingresa en el orden dentro de la lista QUEUE.
+                            foreach(var iter in listaVerticesTemp)
+                            {
+                                QUEUE.Add(new Vertices { State = 3, PastV = dataVertice, Data = iter });
+                            }
+                        }
+
                         break;
 
                     #endregion
@@ -106,6 +176,8 @@ namespace Proyecto_Final_Estructuras_Discretas
 
                     #endregion
 
+                    #region Salida del programa y opciones inválidas
+
                     // Salida del programa.
                     case "4":
                         Console.WriteLine("Saliendo del programa...");
@@ -121,6 +193,8 @@ namespace Proyecto_Final_Estructuras_Discretas
                         Advertencia();
                         Console.WriteLine("Presione cualquier tecla para continuar..."); Console.ReadKey(); Console.Clear();
                         break;
+
+                    #endregion
                 }
             }
 
@@ -133,7 +207,7 @@ namespace Proyecto_Final_Estructuras_Discretas
 
         static void IngresoVertices(string p_dataVertice, ref string p_dataVerticeTemp)
         {
-            Console.Write($"Ingrese el vertice conectado al vertice {p_dataVertice}:"); p_dataVerticeTemp = Console.ReadLine();
+            Console.Write($"Ingrese el vertice conectado al vertice {p_dataVertice}: "); p_dataVerticeTemp = Console.ReadLine();
         }
 
         #endregion
