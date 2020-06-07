@@ -16,7 +16,8 @@ namespace Proyecto_Final_Estructuras_Discretas
             List<Vertices> listaVertices = new List<Vertices>();
 
             // Variables que permitirán operar fluidamente con el programa.
-            int maxVertices, counter = 1;
+            int maxVertices, counter = 1, index = 0;
+            string[] listaVerticesTemp;
             string dataVertice, dataVerticeTemp = null;
             bool validator = true;
 
@@ -47,42 +48,35 @@ namespace Proyecto_Final_Estructuras_Discretas
                             if (maxVertices <= 0) { Advertencia(); Console.WriteLine("Error: Debe existir al menos un vertice."); Advertencia(); continue; }
                             break;
                         }
+                        listaVerticesTemp = new string[maxVertices];
 
                         // Ingreso de vertice inicial.
                         Console.Write("Ingrese el vertice inicial: "); dataVertice = Console.ReadLine();
                         // Cambia de estado a waiting, STATUS = 2.
                         listaVertices.Add(new Vertices() { State = 1, PastV = null, Data = dataVertice });
+                        listaVerticesTemp[index] = dataVertice;
 
                         // Ingreso de vertices.
                         while(counter < maxVertices)
                         {
-                            counter++;
-                            if (validator)
+                            Console.WriteLine();
+                            IngresoVertices(listaVerticesTemp[index], ref dataVerticeTemp);
+                            if (counter == 1) listaVertices.Add(new Vertices() { State = 1, PastV = listaVerticesTemp[index], Data = dataVerticeTemp });
+                            else listaVertices.Add(new Vertices() { State = 1, PastV = listaVerticesTemp[index], Data = dataVerticeTemp });
+                            listaVerticesTemp[counter] = dataVerticeTemp;
+                            do
                             {
-                                //if (counter > 1) dataVertice = dataVerticeTemp;
-                                IngresoVertices(dataVertice, ref dataVerticeTemp);
-                                listaVertices.Add(new Vertices() { State = 1, PastV = dataVertice, Data = dataVerticeTemp });
-                                do
-                                {
-                                    Console.Write($"Existen mas vertices conectados al vertice {dataVertice}? (S:si/N:no)"); opcionAdv = Console.ReadLine().ToUpper().Trim();
-                                    if (opcionAdv != "S" & opcionAdv != "N") { Advertencia(); Console.WriteLine("Error: Opcion ingresada no valida."); Advertencia(); }
-                                } while (opcionAdv != "S" & opcionAdv != "N");                                
-                            }
-                            else
-                            {
-                                //dataVerticeTemp = dataVertice;
-                                IngresoVertices(dataVertice, ref dataVerticeTemp);
-                                listaVertices.Add(new Vertices() { State = 1, PastV = dataVertice, Data = dataVerticeTemp });
-                                do
-                                {
-                                    Console.Write($"Existen mas vertices conectados al vertice {dataVertice}? (S:si/N:no)"); opcionAdv = Console.ReadLine().ToUpper().Trim();
-                                    if (opcionAdv != "S" & opcionAdv != "N") { Advertencia(); Console.WriteLine("Error: Opcion ingresada no valida."); Advertencia(); }
-                                } while (opcionAdv != "S" & opcionAdv != "N");
-                            }
+                                Console.Write($"\nExisten mas vertices conectados al vertice {listaVerticesTemp[index]}? (S:si/N:no): "); opcionAdv = Console.ReadLine().ToUpper().Trim();
+                                if (opcionAdv != "S" & opcionAdv != "N") { Advertencia(); Console.WriteLine("Error: Opcion ingresada no valida."); Advertencia(); }
+                            } while (opcionAdv != "S" & opcionAdv != "N");
 
                             // Para validar ingreso de vertices.
-                            if (opcionAdv == "N") validator = false;
-                            else validator = true;
+                            if (opcionAdv == "N")
+                            {
+                                index++;
+                            }
+
+                            counter++;                  
                         }
 
                         break;
