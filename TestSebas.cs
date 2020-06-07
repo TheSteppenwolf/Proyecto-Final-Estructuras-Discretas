@@ -18,8 +18,7 @@ namespace Proyecto_Final_Estructuras_Discretas
             // Variables que permitirán operar fluidamente con el programa.
             int maxVertices, counter = 1, index = 0;
             string[] listaVerticesTemp;
-            string dataVertice, dataVerticeTemp = null;
-            bool validator = true;
+            string dataVertice, dataVerticeTemp = null;            
 
             // Variables para el menú.
             string opcion1 = null, opcionAdv = null;
