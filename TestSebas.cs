@@ -51,32 +51,36 @@ namespace Proyecto_Final_Estructuras_Discretas
                         listaVerticesTemp = new string[maxVertices];
 
                         // Ingreso de vertice inicial.
-                        Console.Write("Ingrese el vertice inicial: "); dataVertice = Console.ReadLine();
-                        // Cambia de estado a waiting, STATUS = 2.
+                        Console.Write("Ingrese el vertice inicial: "); dataVertice = Console.ReadLine();                        
                         listaVertices.Add(new Vertices() { State = 1, PastV = null, Data = dataVertice });
                         listaVerticesTemp[index] = dataVertice;
 
                         // Ingreso de vertices.
                         while(counter < maxVertices)
                         {
-                            Console.WriteLine();
-                            IngresoVertices(listaVerticesTemp[index], ref dataVerticeTemp);
-                            if (counter == 1) listaVertices.Add(new Vertices() { State = 1, PastV = listaVerticesTemp[index], Data = dataVerticeTemp });
-                            else listaVertices.Add(new Vertices() { State = 1, PastV = listaVerticesTemp[index], Data = dataVerticeTemp });
-                            listaVerticesTemp[counter] = dataVerticeTemp;
+                            // Validación de ingreso en vertice. (Métolodia pregunta antes de actuar)
                             do
                             {
                                 Console.Write($"\nExisten mas vertices conectados al vertice {listaVerticesTemp[index]}? (S:si/N:no): "); opcionAdv = Console.ReadLine().ToUpper().Trim();
                                 if (opcionAdv != "S" & opcionAdv != "N") { Advertencia(); Console.WriteLine("Error: Opcion ingresada no valida."); Advertencia(); }
                             } while (opcionAdv != "S" & opcionAdv != "N");
 
+                            // Ingreso oficial del vertice.
+                            if (opcionAdv == "S")
+                            {
+                                Console.WriteLine();
+                                IngresoVertices(listaVerticesTemp[index], ref dataVerticeTemp);
+                                if (counter == 1) listaVertices.Add(new Vertices() { State = 1, PastV = listaVerticesTemp[index], Data = dataVerticeTemp });
+                                else listaVertices.Add(new Vertices() { State = 1, PastV = listaVerticesTemp[index], Data = dataVerticeTemp });
+                                listaVerticesTemp[counter] = dataVerticeTemp;
+                                counter++;
+                            }
+
                             // Para validar ingreso de vertices.
                             if (opcionAdv == "N")
                             {
                                 index++;
-                            }
-
-                            counter++;                  
+                            }                                            
                         }
 
                         break;
