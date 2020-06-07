@@ -15,8 +15,13 @@ namespace Proyecto_Final_Estructuras_Discretas
             // Almacena el orden de todos los vertices ingresados.
             List<Vertices> listaVertices = new List<Vertices>();
 
+            // Variables que permitirán operar fluidamente con el programa.
+            int maxVertices, counter = 1;
+            string dataVertice, dataVerticeTemp = null;
+            bool validator = true;
+
             // Variables para el menú.
-            string opcion1 = null;
+            string opcion1 = null, opcionAdv = null;
 
             #endregion
 
@@ -33,6 +38,53 @@ namespace Proyecto_Final_Estructuras_Discretas
                     #region Ingreso de datos
 
                     case "1":
+
+                        // Ingreso cantidad de vertices del grafo.
+                        while(true)
+                        {
+                            try { Console.Write("Ingrese la cantidad de vertices del grafo contando con el inicial: "); maxVertices = Convert.ToInt32(Console.ReadLine()); } 
+                            catch { Advertencia(); Console.WriteLine("Error: El valor ingresado debe ser un numero entero."); Advertencia(); continue; }
+                            if (maxVertices <= 0) { Advertencia(); Console.WriteLine("Error: Debe existir al menos un vertice."); Advertencia(); continue; }
+                            break;
+                        }
+
+                        // Ingreso de vertice inicial.
+                        Console.Write("Ingrese el vertice inicial: "); dataVertice = Console.ReadLine();
+                        // Cambia de estado a waiting, STATUS = 2.
+                        listaVertices.Add(new Vertices() { State = 1, PastV = null, Data = dataVertice });
+
+                        // Ingreso de vertices.
+                        while(counter < maxVertices)
+                        {
+                            counter++;
+                            if (validator)
+                            {
+                                //if (counter > 1) dataVertice = dataVerticeTemp;
+                                IngresoVertices(dataVertice, ref dataVerticeTemp);
+                                listaVertices.Add(new Vertices() { State = 1, PastV = dataVertice, Data = dataVerticeTemp });
+                                do
+                                {
+                                    Console.Write($"Existen mas vertices conectados al vertice {dataVertice}? (S:si/N:no)"); opcionAdv = Console.ReadLine().ToUpper().Trim();
+                                    if (opcionAdv != "S" & opcionAdv != "N") { Advertencia(); Console.WriteLine("Error: Opcion ingresada no valida."); Advertencia(); }
+                                } while (opcionAdv != "S" & opcionAdv != "N");                                
+                            }
+                            else
+                            {
+                                //dataVerticeTemp = dataVertice;
+                                IngresoVertices(dataVertice, ref dataVerticeTemp);
+                                listaVertices.Add(new Vertices() { State = 1, PastV = dataVertice, Data = dataVerticeTemp });
+                                do
+                                {
+                                    Console.Write($"Existen mas vertices conectados al vertice {dataVertice}? (S:si/N:no)"); opcionAdv = Console.ReadLine().ToUpper().Trim();
+                                    if (opcionAdv != "S" & opcionAdv != "N") { Advertencia(); Console.WriteLine("Error: Opcion ingresada no valida."); Advertencia(); }
+                                } while (opcionAdv != "S" & opcionAdv != "N");
+                            }
+
+                            // Para validar ingreso de vertices.
+                            if (opcionAdv == "N") validator = false;
+                            else validator = true;
+                        }
+
                         break;
 
                     #endregion
@@ -80,6 +132,15 @@ namespace Proyecto_Final_Estructuras_Discretas
 
         #region Métodos
 
+        #region Ingreso de datos
+
+        static void IngresoVertices(string p_dataVertice, ref string p_dataVerticeTemp)
+        {
+            Console.Write($"Ingrese el vertice conectado al vertice {p_dataVertice}:"); p_dataVerticeTemp = Console.ReadLine();
+        }
+
+        #endregion
+
         #region Ambiente amigable
 
         static void Advertencia()
@@ -98,4 +159,3 @@ namespace Proyecto_Final_Estructuras_Discretas
 
     }
 }
-
