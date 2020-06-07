@@ -15,7 +15,7 @@ namespace Proyecto_Final_Estructuras_Discretas
             // Almacena el orden de todos los vertices ingresados.
             List<Vertices> listaVertices = new List<Vertices>();
 
-            // Sera el QUEUE.
+            // Será el QUEUE.
             List<Vertices> QUEUE = new List<Vertices>();
 
             // Variables que permitirán operar fluidamente con el programa.
