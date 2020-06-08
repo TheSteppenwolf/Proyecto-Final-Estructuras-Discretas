@@ -23,13 +23,13 @@ namespace Proyecto_Final_Estructuras_Discretas
             List<Vertices> QUEUE = new List<Vertices>();
 
             // Variables que permitirán operar fluidamente con el programa.
-            int maxVertices = 0, counter = 1, index = 0, counterValidator = 0;
+            int maxVertices = 0, counter = 1, index = 0;
             string[] listaVerticesTemp = null;
             string dataVertice = null, dataVerticeTemp = null;
             bool validator = true, validator2 = true;
 
             // Variables para el analisis del resusltado.
-            List<int> listaIndexers = new List<int>();            
+            List<int> listaIndexers = new List<int>();
 
             // Variables para el menú.
             string opcion1 = null, opcionAdv = null;
@@ -44,16 +44,21 @@ namespace Proyecto_Final_Estructuras_Discretas
                 Console.Write("\t1.Ingreso de datos.\n\t2.Resultado de busqueda por BFS.\n\t3.Creditos.\n\t4.Salir.\nOpcion: ");
                 opcion1 = Console.ReadLine();
                 Console.Clear();
-                switch(opcion1)
+                switch (opcion1)
                 {
                     #region Ingreso de datos
 
-                    case "1":
+                    case "1":                        
+
+                        // Se incializan variables para su uso indeterminado.
+                        QUEUE = new List<Vertices>();
+                        listaVertices = new List<Vertices>();
+                        counter = 1; index = 0;
 
                         // Ingreso cantidad de vertices del grafo.
-                        while(true)
+                        while (true)
                         {
-                            try { Console.Write("Ingrese la cantidad de conecciones entre vertices del grafo: "); maxVertices = Convert.ToInt32(Console.ReadLine()); } 
+                            try { Console.Write("Ingrese la cantidad de vertices del grafo contando con el inicial: "); maxVertices = Convert.ToInt32(Console.ReadLine()); }
                             catch { Advertencia(); Console.WriteLine("Error: El valor ingresado debe ser un numero entero."); Advertencia(); continue; }
                             if (maxVertices <= 0) { Advertencia(); Console.WriteLine("Error: Debe existir al menos un vertice."); Advertencia(); continue; }
                             break;
@@ -61,57 +66,38 @@ namespace Proyecto_Final_Estructuras_Discretas
                         listaVerticesTemp = new string[maxVertices];
 
                         // Ingreso de vertice inicial.
-                        Console.Write("Ingrese el vertice inicial: "); dataVertice = Console.ReadLine();                        
+                        Console.Write("Ingrese el vertice inicial: "); dataVertice = Console.ReadLine();
                         listaVertices.Add(new Vertices() { State = 1, PastV = null, Data = dataVertice });
                         listaVerticesTemp[index] = dataVertice;
 
                         // Ingreso de vertices.
-                        while(counter < maxVertices)
+                        while (counter < maxVertices)
                         {
-                            validator2 = true;
-                            counterValidator = 0;
+                            // Validación de ingreso en vertice. (Métolodia pregunta antes de actuar)
+                            do
+                            {
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                Console.Write($"\nExisten mas vertices conectados al vertice {listaVerticesTemp[index]}? (S:si/N:no): "); opcionAdv = Console.ReadLine().ToUpper().Trim();
+                                if (opcionAdv != "S" & opcionAdv != "N") { Advertencia(); Console.WriteLine("Error: Opcion ingresada no valida."); Advertencia(); }
+                            } while (opcionAdv != "S" & opcionAdv != "N");
+                            Console.ForegroundColor = ConsoleColor.White;
 
-                            foreach(var iter in listaVertices)
+                            // Ingreso oficial del vertice.
+                            if (opcionAdv == "S")
                             {
-                                if (iter.Data == listaVerticesTemp[index]) counterValidator++;
-                            }
-                            if (counterValidator > 1)
-                            {
-                                IngresoVertices(listaVerticesTemp[index], ref dataVerticeTemp, listaVerticesTemp[index]);
-                                if (counter == 1) listaVertices.Add(new Vertices() { State = 1, PastV = listaVerticesTemp[index], Data = dataVerticeTemp });
-                                else listaVertices.Add(new Vertices() { State = 1, PastV = listaVerticesTemp[index], Data = dataVerticeTemp });
+                                Console.WriteLine();
+                                IngresoVertices(listaVerticesTemp[index], ref dataVerticeTemp);
+                                listaVertices.Add(new Vertices() { State = 1, PastV = listaVerticesTemp[index], Data = dataVerticeTemp });
                                 listaVerticesTemp[counter] = dataVerticeTemp;
                                 counter++;
+                            }
+
+                            // Para validar ingreso de vertices.
+                            if (opcionAdv == "N")
+                            {
                                 index++;
                             }
-                            else
-                            {
-                                // Validación de ingreso en vertice. (Métolodia pregunta antes de actuar)
-                                do
-                                {
-                                    Console.Write($"\nExisten mas vertices conectados al vertice {listaVerticesTemp[index]}? (S:si/N:no): "); opcionAdv = Console.ReadLine().ToUpper().Trim();
-                                    if (opcionAdv != "S" & opcionAdv != "N") { Advertencia(); Console.WriteLine("Error: Opcion ingresada no valida."); Advertencia(); }
-                                } while (opcionAdv != "S" & opcionAdv != "N");
-
-                                // Ingreso oficial del vertice.
-                                if (opcionAdv == "S")
-                                {
-                                    Console.WriteLine();
-                                    IngresoVertices(listaVerticesTemp[index], ref dataVerticeTemp);
-                                    if (counter == 1) listaVertices.Add(new Vertices() { State = 1, PastV = listaVerticesTemp[index], Data = dataVerticeTemp });
-                                    else listaVertices.Add(new Vertices() { State = 1, PastV = listaVerticesTemp[index], Data = dataVerticeTemp });
-                                    listaVerticesTemp[counter] = dataVerticeTemp;
-                                    counter++;
-                                }
-
-                                // Para validar ingreso de vertices.
-                                if (opcionAdv == "N")
-                                {
-                                    index++;
-                                }
-                            }
                         }
-
 
                         Console.Clear();
                         Console.WriteLine("Procesando información..."); Procesando();
@@ -127,9 +113,9 @@ namespace Proyecto_Final_Estructuras_Discretas
                     case "2":
                         // Paso 1: Todos los vertices ya se encuentran inicializados en el estado ready o STATUS = 1.
                         // Paso 2: El vertice inicial se cambia de estado al waiting o STATUS = 2.
-                        foreach(var iter in listaVertices)
+                        foreach (var iter in listaVertices)
                         {
-                            if(iter.Data == listaVerticesTemp[0])
+                            if (iter.Data == listaVerticesTemp[0])
                             {
                                 dataVertice = iter.Data;
                                 dataVerticeTemp = iter.PastV;
@@ -141,10 +127,9 @@ namespace Proyecto_Final_Estructuras_Discretas
 
 
                         // Paso 3: Repetir los pasos 4 y 5 hasta obtener todos los valores.
-                        while(validator)
+                        while (validator)
                         {
                             counter = 0;
-                            validator2 = true;
                             listaVerticesTemp = new string[maxVertices];
                             listaIndexers = new List<int>();
 
@@ -153,7 +138,7 @@ namespace Proyecto_Final_Estructuras_Discretas
                             {
                                 if (iter.PastV == dataVertice)
                                 {
-                                    listaVerticesTemp[counter] = iter.Data; 
+                                    listaVerticesTemp[counter] = iter.Data;
                                     listaIndexers.Add(listaVertices.IndexOf(iter));
                                     counter++;
                                 }
@@ -162,16 +147,16 @@ namespace Proyecto_Final_Estructuras_Discretas
                             // Elimina los vertices de la anterior lista.
                             int temp = 0;
                             foreach (var iter in listaIndexers)
-                            {                                
+                            {
                                 listaVertices.RemoveAt(iter - temp);
                                 temp++;
                             }
 
                             // Ordena de manera ascendente desde el primer valor hasta el ultimo valor el array.
-                            for(int i = 0; i < counter; i++)
-                                for(int j = 0; j < counter - 1; j++)
+                            for (int i = 0; i < counter; i++)
+                                for (int j = 0; j < counter - 1; j++)
                                 {
-                                    if(listaVerticesTemp[j].CompareTo(listaVerticesTemp[j + 1]) > 0)
+                                    if (listaVerticesTemp[j].CompareTo(listaVerticesTemp[j + 1]) > 0)
                                     {
                                         dataVerticeTemp = listaVerticesTemp[j];
                                         listaVerticesTemp[j] = listaVerticesTemp[j + 1];
@@ -180,14 +165,14 @@ namespace Proyecto_Final_Estructuras_Discretas
                                 }
 
                             // Se ingresa en el orden dentro de la lista QUEUE.
-                            foreach(var iter in listaVerticesTemp)
+                            foreach (var iter in listaVerticesTemp)
                             {
-                                if(iter != null) QUEUE.Add(new Vertices { State = 1, PastV = dataVertice, Data = iter });
+                                if (iter != null) QUEUE.Add(new Vertices { State = 1, PastV = dataVertice, Data = iter });
                             }
 
                             // Se inicializa dataVertice con un nuevo vertice por evaluar.
                             // Paso 5: Se declaran variables para examinar los vecinos de cada vertice.
-                            foreach(var iter in QUEUE)
+                            foreach (var iter in QUEUE)
                             {
                                 if (iter.State == 1)
                                 {
@@ -201,20 +186,25 @@ namespace Proyecto_Final_Estructuras_Discretas
                             }
 
                             // Se establece STATUS = 3 o estado processed.
+                            validator2 = true;
                             if (validator)
                             {
                                 QUEUE.RemoveAt(counter);
-                                foreach(var iter in QUEUE)
+                                foreach (var iter in QUEUE)
                                 {
-                                    if (iter.Data == dataVertice) validator2 = false;                                    
+                                    if (iter.Data == dataVertice) validator2 = false;
                                 }
-                                if(validator2) QUEUE.Add(new Vertices { State = 3, PastV = dataVerticeTemp, Data = dataVertice });                                
+                                if (validator2) QUEUE.Add(new Vertices { State = 3, PastV = dataVerticeTemp, Data = dataVertice });
                             }
                         }
 
                         // Salida de información.
+                        Console.WriteLine("Gracias por utilizar ASAAT ---- Breath First Search | Metodo de busqueda por anchura");
+
+                        Advertencia();
                         Console.Write("El resultado de la busqueda es: ");
                         foreach (var iter in QUEUE) Console.Write(iter.Data);
+                        Advertencia();
                         Console.WriteLine("\n\nPresione cualquier tecla para regresar..."); Console.ReadKey(); Console.Clear();
 
                         break;
@@ -252,7 +242,7 @@ namespace Proyecto_Final_Estructuras_Discretas
                         Console.WriteLine("Presione cualquier tecla para continuar..."); Console.ReadKey(); Console.Clear();
                         break;
 
-                    #endregion
+                        #endregion
                 }
             }
 
@@ -267,10 +257,6 @@ namespace Proyecto_Final_Estructuras_Discretas
         {
             Console.Write($"Ingrese el vertice conectado al vertice {p_dataVertice}: "); p_dataVerticeTemp = Console.ReadLine();
         }
-        static void IngresoVertices(string p_dataVertice, ref string p_dataVerticeTemp, string data)
-        {
-            p_dataVerticeTemp = data;
-        }
 
         #endregion
 
@@ -278,7 +264,7 @@ namespace Proyecto_Final_Estructuras_Discretas
 
         static void Advertencia()
         {
-            Console.WriteLine("\n"); for (int i = 0; i < 100; i++) Console.Write("*"); Console.WriteLine("\n");            
+            Console.WriteLine("\n"); for (int i = 0; i < 100; i++) Console.Write("*"); Console.WriteLine("\n");
         }
 
         static void Procesando()
